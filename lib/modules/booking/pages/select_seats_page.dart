@@ -15,11 +15,17 @@ class SelectSeats extends StatefulWidget {
 
 class _SelectSeatsState extends State<SelectSeats> {
   final _scrollController = ScrollController();
-  //Ratio mini map vs big map. we should auto calculate
-  final double _miniMapRatio = 3.8;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final mqd = MediaQuery.of(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.veryDarkBackGround,
@@ -47,14 +53,44 @@ class _SelectSeatsState extends State<SelectSeats> {
                 child: _buildSeatsMap(),
               ),
               Positioned(
-                child: MiniMap(
-                  mapSize: const Size(180, 90),
-                  flyBoxSize: const Size(46, 55),
-                  onMoving: (dragDetail) {
-                    _scrollController.animateTo(
-                        dragDetail.localPosition.dx * _miniMapRatio,
-                        duration: const Duration(milliseconds: 100),
-                        curve: Curves.easeIn);
+                child: AnimatedBuilder(
+                  animation: _scrollController,
+                  builder: (context, child) {
+                    const miniMapWidth = 180.0;
+                    const miniMapHeight = 90.0;
+
+                    final scroll = _scrollController.position;
+                    final viewportDimension = scroll.hasViewportDimension
+                        ? scroll.viewportDimension
+                        : mqd.size.width;
+                    final maxScrollExtent = scroll.hasContentDimensions
+                        ? scroll.maxScrollExtent
+                        : 0.0;
+                    final fullMapWidth = viewportDimension + maxScrollExtent;
+
+                    if (!scroll.hasContentDimensions) {
+                      // hack: trigger rebuild if scroll info is incomplete
+                      WidgetsBinding.instance
+                          ?.addPostFrameCallback((_) => setState(() {}));
+                    }
+
+                    return Visibility(
+                      visible: fullMapWidth > viewportDimension,
+                      child: MiniMap(
+                        mapSize: const Size(miniMapWidth, miniMapHeight),
+                        flyBoxSize: Size(
+                          viewportDimension / fullMapWidth * miniMapWidth,
+                          miniMapHeight,
+                        ),
+                        onMoving: (dx) {
+                          _scrollController.animateTo(
+                            dx * fullMapWidth,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeIn,
+                          );
+                        },
+                      ),
+                    );
                   },
                 ),
               )

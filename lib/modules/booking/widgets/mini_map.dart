@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:movea_ticket_app/modules/booking/blocs/seat_info.dart';
 import 'package:movea_ticket_app/modules/booking/repos/data.dart';
@@ -12,7 +14,7 @@ class MiniMap extends StatefulWidget {
 
   final Size mapSize;
   final Size flyBoxSize;
-  final DragUpdateCallback onMoving;
+  final Function(double dx) onMoving;
 
   @override
   State<MiniMap> createState() => _MiniMapState();
@@ -44,22 +46,25 @@ class _MiniMapState extends State<MiniMap> {
               child: _buildFlyBox(widget.flyBoxSize),
               feedback: _buildFlyBoxFeedBack(widget.flyBoxSize),
               onDragEnd: (dragDetail) {
-                final RenderBox rb = containerKey.currentContext!
-                    .findRenderObject() as RenderBox;
-                final Offset containerOffset = rb.localToGlobal(Offset.zero);
-                if ((dragDetail.offset) <=
-                    (containerOffset +
-                        Offset(widget.mapSize.width, widget.mapSize.height))) {
-                  setState(() {
-                    _pos = dragDetail.offset - containerOffset;
-                  });
-                }
-              },
-              onDragUpdate: (dragDetail) {
-                widget.onMoving(dragDetail);
+                final pos = _calculatePositionFromDragging(dragDetail.offset);
+                setState(() => _pos = pos);
+                widget.onMoving(pos.dx / widget.mapSize.width);
               },
             ))
       ]),
+    );
+  }
+
+  Offset _calculatePositionFromDragging(Offset dragOffset) {
+    final rb = containerKey.currentContext!.findRenderObject() as RenderBox;
+    final containerOffset = rb.localToGlobal(Offset.zero);
+    final newX = dragOffset.dx - containerOffset.dx;
+    final newY = dragOffset.dy - containerOffset.dy;
+    final maxX = widget.mapSize.width - widget.flyBoxSize.width;
+    final maxY = widget.mapSize.height - widget.flyBoxSize.height;
+    return Offset(
+      max(.0, min(maxX, newX)),
+      max(.0, min(maxY, newY)),
     );
   }
 
