@@ -7,11 +7,13 @@ import 'package:movea_ticket_app/modules/booking/repos/data.dart';
 class MiniMap extends StatefulWidget {
   const MiniMap({
     Key? key,
+    required this.dx,
     required this.mapSize,
     required this.flyBoxSize,
     required this.onMoving,
   }) : super(key: key);
 
+  final double dx;
   final Size mapSize;
   final Size flyBoxSize;
   final Function(double dx) onMoving;
@@ -22,14 +24,21 @@ class MiniMap extends StatefulWidget {
 
 class _MiniMapState extends State<MiniMap> {
   final GlobalKey containerKey = GlobalKey();
-  Offset _pos = const Offset(0, 0);
+  late Offset _pos;
 
   @override
   void initState() {
-    // _pos = Offset(widget.mapSize.width / 2 - widget.flyBoxSize.width / 2,
-    //     widget.mapSize.height / 2 - widget.flyBoxSize.height / 2);
-    _pos = const Offset(0, 0);
+    _pos = Offset(widget.dx * widget.mapSize.width, 0);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant MiniMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.dx != oldWidget.dx || widget.mapSize != oldWidget.mapSize) {
+      _pos = Offset(widget.dx * widget.mapSize.width, 0);
+    }
   }
 
   @override

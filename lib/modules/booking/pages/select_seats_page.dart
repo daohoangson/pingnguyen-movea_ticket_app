@@ -77,6 +77,7 @@ class _SelectSeatsState extends State<SelectSeats> {
                     return Visibility(
                       visible: fullMapWidth > viewportDimension,
                       child: MiniMap(
+                        dx: scroll.pixels / fullMapWidth,
                         mapSize: const Size(miniMapWidth, miniMapHeight),
                         flyBoxSize: Size(
                           viewportDimension / fullMapWidth * miniMapWidth,
