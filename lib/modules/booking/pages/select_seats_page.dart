@@ -8,7 +8,6 @@ import 'package:movea_ticket_app/values/seat_colors.dart';
 
 class SelectSeats extends StatefulWidget {
   SelectSeats({Key? key}) : super(key: key);
-  List<Column> items = [];
 
   @override
   State<SelectSeats> createState() => _SelectSeatsState();
@@ -18,11 +17,6 @@ class _SelectSeatsState extends State<SelectSeats> {
   final _scrollController = ScrollController();
   //Ratio mini map vs big map. we should auto calculate
   final double _miniMapRatio = 3.8;
-  @override
-  initState() {
-    _buildData();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,50 +69,11 @@ class _SelectSeatsState extends State<SelectSeats> {
     );
   }
 
-  void _buildData() {
-    widget.items.add(Column(
-      children: dataItemMiss4,
-    ));
-    widget.items.add(Column(
-      children: dataItemMiss4,
-    ));
-    for (int i = 2; i < 6; i++) {
-      widget.items.add(Column(
-        children: dataItem,
-      ));
-    }
-    widget.items.add(Column(
-      children: dataItemEmpty,
-    ));
-    for (int i = 0; i < 6; i++) {
-      widget.items.add(Column(
-        children: dataItem,
-      ));
-    }
-    widget.items.add(Column(
-      children: dataItemEmpty,
-    ));
-    for (int i = 2; i < 6; i++) {
-      widget.items.add(Column(
-        children: dataItem,
-      ));
-    }
-    widget.items.add(Column(
-      children: dataItemMiss4,
-    ));
-    widget.items.add(Column(
-      children: dataItemMiss4,
-    ));
-
-    //Random some seat status for fun
-    dataItem[Random().nextInt(9)].info.seatStatus = SeatStatus.occupied;
-  }
-
   Widget _buildSeatsMap() {
     return ListView(
       controller: _scrollController,
       scrollDirection: Axis.horizontal,
-      children: widget.items,
+      children: infos.toWidgets(SeatSize.normal),
     );
   }
 

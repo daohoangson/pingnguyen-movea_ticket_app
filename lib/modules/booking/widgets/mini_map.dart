@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:movea_ticket_app/modules/booking/repos/dataMini.dart';
+import 'package:movea_ticket_app/modules/booking/blocs/seat_info.dart';
+import 'package:movea_ticket_app/modules/booking/repos/data.dart';
 
 class MiniMap extends StatefulWidget {
   const MiniMap({
@@ -93,42 +94,8 @@ class _MiniMapState extends State<MiniMap> {
   }
 
   Widget _buildMiniMap() {
-    List<Column> itemsMini = [];
-    itemsMini.add(Column(
-      children: dataItemMiss4Mini,
-    ));
-    itemsMini.add(Column(
-      children: dataItemMiss4Mini,
-    ));
-    for (int i = 2; i < 6; i++) {
-      itemsMini.add(Column(
-        children: dataItemMini,
-      ));
-    }
-    itemsMini.add(Column(
-      children: dataItemEmptyMini,
-    ));
-    for (int i = 0; i < 6; i++) {
-      itemsMini.add(Column(
-        children: dataItemMini,
-      ));
-    }
-    itemsMini.add(Column(
-      children: dataItemEmptyMini,
-    ));
-    for (int i = 2; i < 6; i++) {
-      itemsMini.add(Column(
-        children: dataItemMini,
-      ));
-    }
-    itemsMini.add(Column(
-      children: dataItemMiss4Mini,
-    ));
-    itemsMini.add(Column(
-      children: dataItemMiss4Mini,
-    ));
     return Row(
-      children: itemsMini,
+      children: infos.toWidgets(SeatSize.mini),
     );
   }
 }

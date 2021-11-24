@@ -2,13 +2,7 @@ class SeatInfo {
   String seatCode = '';
   SeatPosition seatPos = SeatPosition(1, 1);
   SeatStatus seatStatus = SeatStatus.available;
-  SeatSize seatSize = SeatSize.normal;
-  SeatInfo(
-      this.seatCode, this.seatPos, SeatStatus? seatStatus, SeatSize? seatSize) {
-    if (seatSize != null) {
-      this.seatSize = seatSize;
-    }
-
+  SeatInfo(this.seatCode, this.seatPos, SeatStatus? seatStatus) {
     if (seatStatus != null) {
       this.seatStatus = seatStatus;
     }
